@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop ACC Roblox</title>
+<style>
+body{font-family:Arial;background:#f0f0f0;margin:0;}
+header{background:url('images/banner-roblox.jpg') no-repeat center/cover;color:white;text-align:center;padding:50px 0;}
+header h1{font-size:2.5em;text-shadow:2px 2px 5px rgba(0,0,0,0.5);}
+nav{display:flex;justify-content:center;gap:20px;background:#fff;padding:10px 0;position:sticky;top:0;z-index:999;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+nav a{text-decoration:none;color:#1a73e8;font-weight:bold;} nav a:hover{color:#ffcc00;}
+.container{max-width:1000px;margin:auto;padding:20px;}
+.account{background:white;border-radius:15px;padding:15px;margin:15px 0;display:flex;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,0.1);transition:0.3s;}
+.account:hover{transform:translateY(-5px);}
+.account img{width:60px;margin-right:15px;}
+.account-info{flex:1;}
+.account button{background:#ffcc00;color:#000;border:none;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:bold;}
+.account button:hover{background:#e6b800;}
+.form-box{max-width:400px;margin:30px auto;background:white;padding:25px;border-radius:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+.form-box h2{text-align:center;margin-bottom:15px;color:#1a73e8;}
+.form-box input, .form-box select{width:100%;padding:10px;margin:8px 0;border-radius:10px;border:1px solid #ccc;}
+.form-box button{width:100%;padding:12px;border:none;border-radius:10px;background:#1a73e8;color:white;font-weight:bold;cursor:pointer;}
+.form-box button:hover{background:#1665c1;}
+.switch{text-align:center;margin-top:10px;color:#1a73e8;cursor:pointer;}
+</style>
+</head>
+<body>
+<header><h1>🎮 Shop ACC Roblox</h1></header>
+<nav><a href="#acc-list">Danh sách ACC</a><a href="#auth">Đăng nhập / Đăng ký</a><a href="#topup">Nạp thẻ</a></nav>
+
+<div class="container" id="acc-list"><h2>Danh sách ACC Roblox</h2></div>
+
+<div class="form-box" id="auth">
+<div id="login-form">
+<h2>Đăng nhập</h2>
+<input type="text" id="login-username" placeholder="Tên đăng nhập">
+<input type="password" id="login-password" placeholder="Mật khẩu">
+<button onclick="login()">Đăng nhập</button>
+<div class="switch" onclick="toggleForm()">Chưa có tài khoản? Đăng ký</div>
+</div>
+<div id="register-form" style="display:none;">
+<h2>Đăng ký</h2>
+<input type="text" id="reg-username" placeholder="Tên đăng nhập">
+<input type="password" id="reg-password" placeholder="Mật khẩu">
+<input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu">
+<button onclick="register()">Đăng ký</button>
+<div class="switch" onclick="toggleForm()">Đã có tài khoản? Đăng nhập</div>
+</div>
+</div>
+
+<div class="form-box" id="topup">
+<h2>Nạp thẻ</h2>
+<input type="text" id="card-code" placeholder="Mã thẻ">
+<input type="text" id="card-serial" placeholder="Số serial">
+<select id="card-type">
+<option value="">Chọn loại thẻ</option>
+<option value="viettel">Viettel</option>
+<option value="mobifone">Mobifone</option>
+<option value="vinaphone">Vinaphone</option>
+</select>
+<button onclick="topUp()">Nạp thẻ</button>
+</div>
+
+<script>
+let currentUser=null;
+
+function fetchACC(){
+fetch('http://localhost:3000/api/acc').then(r=>r.json()).then(data=>{
+const container=document.getElementById('acc-list'); container.innerHTML='<h2>Danh sách ACC Roblox</h2>';
+data.forEach(acc=>{
+const div=document.createElement('div'); div.className='account';
+div.innerHTML=`<img src="images/${acc.icon}" alt="${acc.username}"><div class="account-info"><p>Username: ${acc.username}</p><p>Giá: ${acc.price} VND</p></div><button onclick="buyAccount(${acc.id})">Mua ngay</button>`;
+container.appendChild(div);
+});
+});
+}
+
+function toggleForm(){
+const loginForm=document.getElementById('login-form');
+const registerForm=document.getElementById('register-form');
+if(loginForm.style.display==='none'){loginForm.style.display='block';registerForm.style.display='none';}
+else{loginForm.style.display='none';registerForm.style.display='block';}
+}
+
+function register(){
+const user=document.getElementById('reg-username').value;
+const pass=document.getElementById('reg-password').value;
+const confirm=document.getElementById('reg-confirm').value;
+if(!user||!pass){alert('Vui lòng điền đầy đủ thông tin!');return;}
+if(pass!==confirm){alert('Mật khẩu không khớp!');return;}
+fetch('http://localhost:3000/api/register',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({username:user,password:pass})
+}).then(r=>r.json()).then(res=>{if(res.success){alert('Đăng ký thành công!');toggleForm();}else{alert(res.msg);}});
+}
+
+function login(){
+const user=document.getElementById('login-username
